@@ -6,10 +6,12 @@ fn main() {
     let x = MyU64(0u64);
     println!("Serializing with bincode");
     let encoder = bincode::DefaultOptions::new();
-    encoder.serialize(&x).unwrap();
+    let bytes = encoder.serialize(&x).unwrap();
+    println!("Serialized bytes: {:x?}", bytes);
 
     println!("Serializing with serde_json");
-    serde_json::to_vec(&x).unwrap();
+    let bytes = serde_json::to_vec(&x).unwrap();
+    println!("Serialized json: {}", std::str::from_utf8(&bytes).unwrap());
 }
 
 struct MyU64(pub u64);
