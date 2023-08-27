@@ -1,13 +1,24 @@
 use bincode::Options;
+use std::io::{BufWriter, Write};
 use std::mem;
 use serde::{Serialize, Serializer, ser::SerializeSeq};
 
 fn main() {
     let x = MyU64(0u64);
-    println!("Serializing with bincode");
+    println!("Serializing with bincode serialize");
     let encoder = bincode::DefaultOptions::new();
     let bytes = encoder.serialize(&x).unwrap();
     println!("Serialized bytes: {:x?}", bytes);
+
+    println!("Serializing with bincode serialize_into");
+    let mut bytes = Vec::<u8>::new();
+    {
+        let mut writer = BufWriter::new(&mut bytes);
+        encoder.serialize_into(&mut writer, &x).unwrap();
+        writer.flush().unwrap();
+    }
+    println!("Serialized bytes: {:x?}", bytes);
+
 
     println!("Serializing with serde_json");
     let bytes = serde_json::to_vec(&x).unwrap();
